@@ -17,7 +17,6 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-hot-toast": "^2.4.0",
-    "react-loading-skeleton": "^3.1.0",
     "react-spinners": "^0.13.4",
     "sharp": "^0.31.0",
     "uuid": "^9.0.0"
