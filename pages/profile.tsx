@@ -1,20 +1,20 @@
 import { CalendarDaysIcon } from "@heroicons/react/24/outline";
-import { profile } from "console";
-import { arrayRemove, arrayUnion, collection, doc, onSnapshot, query, updateDoc, where } from "firebase/firestore";
+import { collection, onSnapshot, query, where } from "firebase/firestore";
 import Image from "next/image";
 import React, { useContext, useEffect, useState } from "react";
 import Card from "../components/Card";
 import EditModal from "../components/EditModal";
 import { AuthContext } from "../context/AuthContext";
+import { handleLike } from "../Helpers/firebase";
 import { AuthContextI } from "../interfaces/AuthContextI";
 import { PostI } from "../interfaces/PostI";
 import { UserI } from "../interfaces/User";
 import { db } from "../lib/firebase";
 
- const Profile = () => {
+const Profile = () => {
   const { currentUser } = useContext<AuthContextI>(AuthContext);
   const [posts, setPosts] = useState<PostI[]>([]);
-  const[showEditModal,setShowEditModal]=useState<boolean>(false)
+  const [showEditModal, setShowEditModal] = useState<boolean>(false);
   const [user, setUser] = useState<UserI>();
 
   useEffect(() => {
@@ -38,15 +38,11 @@ import { db } from "../lib/firebase";
     if (!currentUser) return;
     const q = query(
       collection(db, "posts"),
-      where(
-        "postedBy.uid",
-        "==",
-     currentUser?.uid
-      )
+      where("postedBy.uid", "==", currentUser?.uid)
     );
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      let data=snapshot.docs.map((doc) => ({ id: doc.id, data: doc.data() }))
-      data.sort((a,b)=>b.data.createdAt-a.data.createdAt)
+      let data = snapshot.docs.map((doc) => ({ id: doc.id, data: doc.data() }));
+      data.sort((a, b) => b.data.createdAt - a.data.createdAt);
       setPosts(data as PostI[]);
     });
     return () => {
@@ -54,39 +50,9 @@ import { db } from "../lib/firebase";
     };
   }, []);
 
-
-  const like = async (id: string) => {
-    await updateDoc(doc(db, "posts", id), {
-      likes: arrayUnion({
-        uid: currentUser && currentUser.uid,
-      }),
-    });
+  const handleClose = () => {
+    setShowEditModal(false);
   };
-
-  const unLike = async (id: string) => {
-    const ref = doc(db, "posts", id);
-
-    await updateDoc(ref, {
-      likes: arrayRemove({
-        uid: currentUser && currentUser.uid,
-      }),
-    });
-  };
-
-  const handleLike = (id: string, post: PostI) => {
-    like(id);
-    let isLiked = post.data.likes.find((item) => item.uid === currentUser?.uid);
-
-    return typeof isLiked === "undefined" ? like(id) : unLike(id);
-  };
-
-const handleClose=()=>{
-  setShowEditModal(false)
-}
-
-
-
-
 
   return (
     <>
@@ -125,7 +91,7 @@ const handleClose=()=>{
               />
             </div>
             <a
-            onClick={()=>setShowEditModal(true)}
+              onClick={() => setShowEditModal(true)}
               href="#!"
               className="text-[#0f1419]  font-bold  text-[1.5rem] border-2 border-[#CFD9DE] rounded-[2.3rem] p-3 px-7
          hover:bg-[#E7E7E8] inline-block mt-20"
@@ -137,7 +103,7 @@ const handleClose=()=>{
 
         <div className="p-4">
           <p className="font-bold text-[1.9rem]">{user?.displayName}</p>
- <p className="text-[#0f1419] text-[1.5rem] mb-4">{user?.bio}</p>
+          <p className="text-[#0f1419] text-[1.5rem] mb-4">{user?.bio}</p>
           <div className="flex items-center text-[1.4rem] space-x-2">
             <CalendarDaysIcon className="w-8 h-8 text-[#536471]" />
             <p className="text-[#536471]">Joined December 2014</p>
@@ -145,38 +111,33 @@ const handleClose=()=>{
 
           <div className="flex items-center space-x-5 my-3">
             <p className="text-[1.5rem] font-semibold">
-              {user?.followings.length} <span className="text-[#536471] font-medium">Following</span>
+              {user?.followings.length}{" "}
+              <span className="text-[#536471] font-medium">Following</span>
             </p>
             <p className="text-[1.5rem] font-semibold">
-            {user?.followers.length} <span className="text-[#536471] font-medium">Followers</span>
+              {user?.followers.length}{" "}
+              <span className="text-[#536471] font-medium">Followers</span>
             </p>
           </div>
-       
         </div>
-        {posts.map(post=>
-           <Card
-           key={post.id}
-           image={post.data.image}
-           caption={post.data.caption}
-           handleLike={handleLike}
-           id={post.id as string}
-           post={post}
-           likes={post.data.likes.length}
-           postedBy={post.data.postedBy}
-           comments={post.data.comments.length}
-           hide={true}
-    
-         />
-            )}
-        
+        {posts.map((post) => (
+          <Card
+            key={post.id}
+            image={post.data.image}
+            caption={post.data.caption}
+            handleLike={handleLike}
+            id={post.id as string}
+            post={post}
+            likes={post.data.likes.length}
+            postedBy={post.data.postedBy}
+            comments={post.data.comments.length}
+            hide={true}
+          />
+        ))}
       </div>
-      {showEditModal&&
-      <EditModal close={handleClose}/>
-      }
+      {showEditModal && <EditModal close={handleClose} />}
     </>
   );
 };
 
-
-
-export default Profile
+export default Profile;

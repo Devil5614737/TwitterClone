@@ -64,9 +64,10 @@ const EditModal = ({ close }: PropsI) => {
               />
               <p className="text-[1.5rem]">Edit Profile</p>
             </div>
-            <a
+            <button
+            disabled={!name||!bio||!url}
               onClick={handleEdit}
-              href="#!"
+    
               className="inline-block  text-[1.6rem] p-3 bg-black text-white rounded-[1.9rem] px-[2rem]"
             >
                {loading ? (
@@ -74,7 +75,7 @@ const EditModal = ({ close }: PropsI) => {
             ) : (
               "Save"
             )}
-            </a>
+            </button>
           </div>
           <div className="my-2">
            

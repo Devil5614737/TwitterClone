@@ -20,3 +20,7 @@ body{
   font-family: sans-serif ;
   overflow-x:hidden;
 }
+
+:disabled{
+  background-color: #818181;
+}

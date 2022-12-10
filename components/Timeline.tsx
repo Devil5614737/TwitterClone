@@ -1,45 +1,19 @@
 import { SparklesIcon } from "@heroicons/react/24/outline";
-import { arrayRemove, arrayUnion, doc, updateDoc } from "firebase/firestore";
 import React, { useContext, useState } from "react";
-import { AuthContext } from "../context/AuthContext";
 import { PostContext } from "../context/PostContext";
-import { AuthContextI } from "../interfaces/AuthContextI";
+import { handleLike} from "../Helpers/firebase";
+
 import { PostContextI } from "../interfaces/PostContextI";
-import { PostI } from "../interfaces/PostI";
-import { db } from "../lib/firebase";
+
 import Card from "./Card";
 import CommentModal from "./CommentModal";
 import TweetBox from "./TweetBox";
 
 const Timeline = () => {
   const { posts, progress } = useContext<PostContextI>(PostContext);
-  const { currentUser } = useContext<AuthContextI>(AuthContext);
   const [openCommentModal, setOpenCommentModal] = useState<boolean>(false);
 
-  const like = async (id: string) => {
-    await updateDoc(doc(db, "posts", id), {
-      likes: arrayUnion({
-        uid: currentUser && currentUser.uid,
-      }),
-    });
-  };
 
-  const unLike = async (id: string) => {
-    const ref = doc(db, "posts", id);
-
-    await updateDoc(ref, {
-      likes: arrayRemove({
-        uid: currentUser && currentUser.uid,
-      }),
-    });
-  };
-
-  const handleLike = (id: string, post: PostI) => {
-    like(id);
-    let isLiked = post.data.likes.find((item) => item.uid === currentUser?.uid);
-
-    return typeof isLiked === "undefined" ? like(id) : unLike(id);
-  };
 
   const open = () => {
     setOpenCommentModal(true);
@@ -76,7 +50,7 @@ const Timeline = () => {
         {posts?.map((post) => (
           <Card
             key={post.id}
-            image={post.data.image}
+            image={post?.data.image}
             caption={post.data.caption}
             handleLike={handleLike}
             id={post.id as string}

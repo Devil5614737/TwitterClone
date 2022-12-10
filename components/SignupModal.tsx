@@ -13,9 +13,10 @@ import { auth, db } from "../lib/firebase";
 
 interface PropsI {
   handleClose: () => void;
+  setOpenSignupModal:(openSignupModal:boolean)=>void
 }
 
-const SignupModal = ({ handleClose }: PropsI) => {
+const SignupModal = ({ handleClose ,setOpenSignupModal}: PropsI) => {
   const router = useRouter();
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -44,9 +45,11 @@ const SignupModal = ({ handleClose }: PropsI) => {
           bio: "",
           photoURL: "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png",
         }).then(() =>{
-          toast.success("user created successfully")
+          toast.success("user created successfully");
           setLoading(false)
-          router.push("/dashboard")});
+          setOpenSignupModal(false)
+        })
+          
       } catch (e) {
         setLoading(false)
        toast.error('try again!!!')

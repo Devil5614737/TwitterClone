@@ -18,9 +18,7 @@ const handleOpenProfile=()=>{
   return (
     <>
       <div className="container m-auto grid grid-cols-4">
-        <Sidebar show={handleOpenProfile} setShowProfile={setShowProfile}/>
-
-        
+        <Sidebar show={handleOpenProfile} setShowProfile={setShowProfile}/>      
         {showProfile ? <Profile  /> : <Timeline />}
         <RightSideBar />
       </div>

@@ -70,7 +70,7 @@ const handleCloseSignup=()=>{
     <LoginModal handleClose={handleClose}/>
     }
     {openSignupModal&&
-    <SignupModal handleClose={handleCloseSignup}/>
+    <SignupModal handleClose={handleCloseSignup} setOpenSignupModal={setOpenSignupModal}/>
     }
 </>
   );

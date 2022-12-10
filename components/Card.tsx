@@ -18,11 +18,12 @@ import { AuthContextI } from "../interfaces/AuthContextI";
 import { PostContextI } from "../interfaces/PostContextI";
 import { postedByI, PostI } from "../interfaces/PostI";
 import { db } from "../lib/firebase";
+import {motion} from 'framer-motion'
 
 interface PropsI {
   image: string;
   caption: string;
-  handleLike: (id: string, post: PostI) => void;
+  handleLike: (id: string, post: PostI,uid:string) => void;
   id: string;
   post: PostI;
   likes: number;
@@ -58,7 +59,16 @@ const Card = ({
   let isLiked = post.data.likes.find((item) => item.uid === currentUser?.uid);
 
   return (
-    <div className="p-3 py-5 relative  border-t-2 hover:bg-[#F7F7F7]  border-[#EFF3F4]">
+    <motion.div
+    initial={{ y:50,opacity:0}}
+  animate={{ y:0, opacity: 1 }}
+  transition={{
+    type: "spring",
+    stiffness: 260,
+    damping: 20,
+    delay:.5
+  }}
+    className="p-3 py-5 relative  border-t-2 hover:bg-[#F7F7F7]  border-[#EFF3F4]">
       <div className="flex  space-x-5  onClick={()=>setShow(false)} ">
         <div className="">
           <Image
@@ -67,7 +77,7 @@ const Card = ({
             height={48}
             width={48}
             objectFit="cover"
-            src={postedBy.photoURL}
+            src={postedBy?.photoURL}
             alt='postedby'
           />
         </div>
@@ -97,7 +107,7 @@ const Card = ({
                 layout="responsive"
                 loading="lazy"
                 objectFit="cover"
-                src={image}
+                src={image&&image}
                 alt='postedby'
               />
             )}
@@ -124,7 +134,7 @@ const Card = ({
               <p className="text-[1.4rem]">8</p>
             </div>
             <div
-              onClick={() => handleLike(id, post)}
+              onClick={() => handleLike(id, post,currentUser?.uid as string)}
               className="flex cursor-pointer items-center space-x-3 hover:text-[#F91880] transition-all delay-100 ease-in-out"
             >
               <HeartIcon
@@ -149,7 +159,7 @@ const Card = ({
              height={27}
              width={27}
              objectFit="cover"
-             src={comment.postedBy.photoURL}
+             src={comment?.postedBy.photoURL}
              alt='postedby'
             />
           <div className="">
@@ -182,7 +192,7 @@ const Card = ({
           </p>
         </div>
       )}
-    </div>
+    </motion.div>
   );
 };
 

@@ -16,7 +16,7 @@ import Image from "next/image";
 import React, { ChangeEvent, useContext, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { PostContext } from "../context/PostContext";
-
+import {motion} from 'framer-motion';
 import { AuthContextI } from "../interfaces/AuthContextI";
 import { PostContextI } from "../interfaces/PostContextI";
 import { db, storage } from "../lib/firebase";
@@ -170,13 +170,16 @@ const TweetBox = () => {
               <LinkIcon className="h-8 w-8 cursor-pointer text-[#1D9BF0]" />
             </div>
           </div>
-          <button
+          <motion.button
+           whileTap={{
+    scale: 0.8,
+}}
             onClick={handleTweet}
             disabled={!text}
             className="text-[1.5rem] font-semibold bg-[#1D9BF0] py-3 px-9 rounded-full text-white disabled:opacity-[.5]"
           >
             Tweet
-          </button>
+          </motion.button>
         </div>
       </div>
         <Toaster
